@@ -1,0 +1,35 @@
+version: 2.1
+
+jobs:
+  build-and-test:
+    parameters:
+      jdk:
+        type: string
+    docker:
+      - image: cimg/openjdk:<< parameters.jdk >>
+    resource_class: small
+    steps:
+      - checkout
+      - run:
+          name: Build
+          command: mvn -B -DskipTests clean package
+      - run:
+          name: Test
+          command: mvn verify
+      - when:
+          condition:
+            and:
+              - equal: [ "8.0", << parameters.jdk >> ]
+              - equal: [ "main", << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Coverage
+                command: mvn jacoco:report coveralls:report
+
+workflows:
+  build:
+    jobs:
+      - build-and-test:
+          matrix:
+            parameters:
+              jdk: ["8.0", "11.0", "17.0", "21.0"]
