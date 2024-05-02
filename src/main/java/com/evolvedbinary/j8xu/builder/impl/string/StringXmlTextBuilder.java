@@ -24,33 +24,22 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.evolvedbinary.j8xu.builder.api;
+package com.evolvedbinary.j8xu.builder.impl.string;
 
-import static com.evolvedbinary.j8xu.builder.api.XmlBuilder.attribute;
+import com.evolvedbinary.j8xu.builder.api.XmlTextBuilder;
 
-public class Example {
+public class StringXmlTextBuilder implements XmlTextBuilder<String> {
+  private final StringContext context;
+  private final String content;
 
-  public static void main(String args[]) {
-
-    XmlBuilder<String> x = null;
-
-    XmlDocumentBuilder<String> document = x.document(
-        x.comment("start of the doc"),
-        x.element("http://example.com/people", "people",
-          x.element("person",
-            x.attributes(
-                attribute("id", 1)
-            ),
-            x.element("firstName", x.text("john")),
-            x.element("lastName", x.text("doe")),
-            x.element("phone", x.text("555-555-55")),
-            x.element("status")
-          )
-        ),
-        x.comment("end of the doc")
-    );
-
-    String asString = document.build();
+  StringXmlTextBuilder(final StringContext context, final String content) {
+    this.context = context;
+    this.content = content;
   }
 
+  @Override
+  public String build() {
+    context.markMixedContentTreeDepth();
+    return content;
+  }
 }
