@@ -4,11 +4,21 @@
 [![Coverage Status](https://coveralls.io/repos/github/evolvedbinary/j8xu/badge.svg?branch=main)](https://coveralls.io/github/evolvedbinary/j8xu?branch=main)
 [![Java 8](https://img.shields.io/badge/java-8-blue.svg)](https://adoptopenjdk.net/)
 [![License](https://img.shields.io/badge/license-BSD%203-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.evolvedbinary.j8xu/j8xu/badge.svg)](https://search.maven.org/search?q=g:com.evolvedbinary.j8xu)
 
 Some extra utility classes for making working with XML in Java just that little bit easier.
 
 The main thing here at the moment is a DSL like Builder Pattern for programmatically constructing.
+
+## Maven Dependency
+You can add the library to your project as a dependency with the following Maven coordinates:
+```xml
+<dependency>
+    <groupId>com.evolvedbinary.j8xu</groupId>
+    <artifactId>j8xu</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
 
 ## XML Builder
 
