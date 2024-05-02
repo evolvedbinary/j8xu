@@ -10,7 +10,7 @@
 
     <groupId>com.evolvedbinary.j8xu</groupId>
     <artifactId>j8xu</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <name>Java 8 XML Utilities</name>
     <description>XML Utilities for Java 8</description>
@@ -41,7 +41,7 @@
         <connection>scm:git:https://github.com/evolvedbinary/j8xu.git</connection>
         <developerConnection>scm:git:https://github.com/evolvedbinary/j8xu.git</developerConnection>
         <url>scm:git:https://github.com/evolvedbinary/j8xu.git</url>
-        <tag>1.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
