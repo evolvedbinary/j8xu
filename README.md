@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/evolvedbinary/j8xu/badge.svg?branch=main)](https://coveralls.io/github/evolvedbinary/j8xu?branch=main)
 [![Java 8](https://img.shields.io/badge/java-8-blue.svg)](https://adoptopenjdk.net/)
 [![License](https://img.shields.io/badge/license-BSD%203-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.evolvedbinary.j8xu/j8xu/badge.svg)](https://search.maven.org/search?q=g:com.evolvedbinary.j8xu)
+[![Maven Central](https://img.shields.io/maven-central/v/com.evolvedbinary.j8xu/j8xu?logo=apachemaven&label=maven+central&color=green)](https://central.sonatype.com/search?namespace=com.evolvedbinary.j8xu)
 
 Some extra utility classes for making working with XML in Java just that little bit easier.
 
