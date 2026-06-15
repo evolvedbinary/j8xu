@@ -68,7 +68,7 @@ public class BomFilterInputStream extends InputStream {
      */
     private @Nullable BOM bom = null;
 
-    BomFilterInputStream(final InputStream in) {
+    public BomFilterInputStream(final InputStream in) {
         this.in = in;
     }
 
