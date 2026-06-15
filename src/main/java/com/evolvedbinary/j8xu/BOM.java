@@ -26,21 +26,27 @@
  */
 package com.evolvedbinary.j8xu;
 
+import javax.annotation.Nullable;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.Arrays;
 
 /**
  * BOMs (Byte Order Marks)
  */
 public enum BOM {
-    UTF_8(0xEF, 0xBB, 0xBF),
-    UTF_16_BE(0xFE, 0xFF),
-    UTF_16_LE(0xFF, 0xFE),
-    UTF_32_BE(0x00, 0x00, 0xFE, 0xFF),
-    UTF_32_LE(0xFF, 0xFE, 0x00, 0x00),
-    SCSU(0x0E, 0xFE, 0xFF),
-    BOCU_1(0xFB, 0xEE, 0x28),
-    GB_18030(0x84, 0x31, 0x95, 0x33);
+    UTF_8(StandardCharsets.UTF_8,           0xEF, 0xBB, 0xBF),
+    UTF_16_BE(StandardCharsets.UTF_16BE,    0xFE, 0xFF),
+    UTF_16_LE(StandardCharsets.UTF_16LE,    0xFF, 0xFE),
+    UTF_32_BE("UTF-32BE",                   0x00, 0x00, 0xFE, 0xFF),
+    UTF_32_LE("UTF-32LE",                   0xFF, 0xFE, 0x00, 0x00),
+    SCSU("SCSU",                            0x0E, 0xFE, 0xFF),
+    BOCU_1("BOCU-1",                        0xFB, 0xEE, 0x28),
+    GB_18030("GB-18030",                    0x84, 0x31, 0x95, 0x33);
 
+    @Nullable private final Charset charset;
+    @Nullable private final UnsupportedCharsetException unsupportedCharsetException;
     private final byte[] bomBytes;
     public final int c1;
     public final int c2;
@@ -48,7 +54,38 @@ public enum BOM {
     public final int c4;
 
 
-    BOM(final int... bomBytes) {
+    BOM(final String charset, final int... bomBytes) {
+        @Nullable Charset c = null;
+        @Nullable UnsupportedCharsetException uce = null;
+        try {
+            c = Charset.forName(charset);
+        } catch (final UnsupportedCharsetException e) {
+            uce = e;
+        }
+
+        this.charset = c;
+        this.unsupportedCharsetException = uce;
+        this.bomBytes = new byte[bomBytes.length];
+        for (int i = 0; i < bomBytes.length; i++) {
+            this.bomBytes[i] = (byte) bomBytes[i];
+        }
+        this.c1 = bomBytes[0];
+        this.c2 = bomBytes[1];
+        if (bomBytes.length >= 3) {
+            this.c3 = bomBytes[2];
+        } else {
+            this.c3 = -1;
+        }
+        if (bomBytes.length >= 4) {
+            this.c4 = bomBytes[3];
+        } else {
+            this.c4 = -1;
+        }
+    }
+
+    BOM(final Charset charset, final int... bomBytes) {
+        this.charset = charset;
+        this.unsupportedCharsetException = null;
         this.bomBytes = new byte[bomBytes.length];
         for (int i = 0; i < bomBytes.length; i++) {
             this.bomBytes[i] = (byte) bomBytes[i];
@@ -74,5 +111,19 @@ public enum BOM {
      */
     public byte[] getBomBytes() {
         return Arrays.copyOf(bomBytes, bomBytes.length);
+    }
+
+    /**
+     * Get the charset that should be used when this BOM is present.
+     *
+     * @return the charset relevant to the BOM.
+     *
+     * @throws UnsupportedCharsetException if no support for the named charset is available in this instance of the JVM.
+     */
+    public Charset getCharset() throws UnsupportedCharsetException {
+        if (unsupportedCharsetException != null) {
+            throw unsupportedCharsetException;
+        }
+        return charset;
     }
 }
