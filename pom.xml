@@ -50,6 +50,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <contact.email>tech@evolvedbinary.com</contact.email>
 
+        <project.build.outputTimestamp>2026-06-15T15:17:21Z</project.build.outputTimestamp>
+
         <junit.version>5.10.2</junit.version>
     </properties>
 
@@ -70,6 +72,13 @@
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
@@ -80,6 +89,17 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>3.2.8</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>0.10.0</version>
+                    <extensions>true</extensions>
+                </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
@@ -151,9 +171,9 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.code54.mojo</groupId>
-                <artifactId>buildversion-plugin</artifactId>
-                <version>1.0.3</version>
+                <groupId>com.evolvedbinary.maven.plugins</groupId>
+                <artifactId>buildversion-maven-plugin</artifactId>
+                <version>2.0.0</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
@@ -255,7 +275,7 @@
                             <Git-Commit-Abbrev>${build-commit-abbrev}</Git-Commit-Abbrev>
                             <Git-Commit-Timestamp>${build-tstamp}</Git-Commit-Timestamp>
                             <Build-Version>${build-version}</Build-Version>
-                            <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
+                            <Build-Timestamp>${project.build.outputTimestamp}</Build-Timestamp>
                             <Source-Repository>${project.scm.connection}</Source-Repository>
                             <Description>${project.description}</Description>
                             <Implementation-URL>${project.url}</Implementation-URL>
@@ -279,7 +299,7 @@
                             <Git-Commit-Abbrev>${build-commit-abbrev}</Git-Commit-Abbrev>
                             <Git-Commit-Timestamp>${build-tstamp}</Git-Commit-Timestamp>
                             <Build-Version>${build-version}</Build-Version>
-                            <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
+                            <Build-Timestamp>${project.build.outputTimestamp}</Build-Timestamp>
                             <Source-Repository>${project.scm.connection}</Source-Repository>
                             <Description>${project.description}</Description>
                             <Implementation-URL>${project.url}</Implementation-URL>
@@ -304,7 +324,7 @@
                             <Git-Commit-Abbrev>${build-commit-abbrev}</Git-Commit-Abbrev>
                             <Git-Commit-Timestamp>${build-tstamp}</Git-Commit-Timestamp>
                             <Build-Version>${build-version}</Build-Version>
-                            <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
+                            <Build-Timestamp>${project.build.outputTimestamp}</Build-Timestamp>
                             <Source-Repository>${project.scm.connection}</Source-Repository>
                             <Description>${project.description}</Description>
                             <Implementation-URL>${project.url}</Implementation-URL>
@@ -320,17 +340,12 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.2.0</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.3.1</version>
                 <configuration>
-                    <mavenExecutorId>forked-path</mavenExecutorId> <!-- avoid a bug with GPG plugin hanging https://jira.codehaus.org/browse/MGPG-9 -->
                     <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <tagNameFormat>${project.artifactId}-@{project.version}</tagNameFormat>
+                    <releaseProfiles>j8xu-release</releaseProfiles>
                 </configuration>
             </plugin>
         </plugins>
@@ -354,6 +369,44 @@
     </reporting>
 
     <profiles>
+        <profile>
+            <!-- NOTE: this is used from the maven-release-plugin -->
+            <id>j8xu-release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <keyname>${j8xu.release.key}</keyname>
+                                    <defaultKeyring>false</defaultKeyring>
+                                    <publicKeyring>${j8xu.release.public-keyfile}</publicKeyring>
+                                    <secretKeyring>${j8xu.release.private-keyfile}</secretKeyring>
+                                    <passphrase>${j8xu.release.key.passphrase}</passphrase>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <deploymentName>${project.artifactId}-${project.version}</deploymentName>
+                            <failOnBuildFailure>true</failOnBuildFailure>
+                            <waitUntil>validated</waitUntil>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>upload-jacoco-to-coveralls</id>
             <activation>
